@@ -29,8 +29,7 @@ def client() -> TestAPIClient:
 def user_factory():
     def factory(size: int = None, /, **kwargs):
         if kwargs.pop("raw", None):
-            result = UserFactory.stub(**kwargs)
-            return result.__dict__
+            return UserFactory.stub(**kwargs).__dict__
         if size:
             return UserFactory.create_batch(size, **kwargs)
         return UserFactory.create(**kwargs)

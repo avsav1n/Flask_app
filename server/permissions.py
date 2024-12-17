@@ -6,7 +6,7 @@ from flask import Request, request
 
 from server.config import SECRET_KEY
 from server.exceptions import HttpError
-from server.models import Advertisement, User
+from server.models import User
 
 
 def encode_token(user: User) -> dict:
@@ -35,7 +35,7 @@ def _decode_token(token: str) -> dict:
         raise HttpError(401, "The provided authorization token is invalid")
 
 
-def _check_permissions_for_advertisement(is_auth: bool, is_owner: bool, kwargs: dict) -> None:
+def _check_permissions_for_advertisement(is_owner: bool, kwargs: dict) -> None:
     if request.is_authenticated:
         if is_owner and kwargs:
             for advertisement in request.user.advertisements:
@@ -46,7 +46,7 @@ def _check_permissions_for_advertisement(is_auth: bool, is_owner: bool, kwargs: 
         raise HttpError(401, "Authorization credentials were not provided")
 
 
-def _check_permissions_for_user(is_auth: bool, is_owner: bool, kwargs: dict) -> None:
+def _check_permissions_for_user(is_owner: bool, kwargs: dict) -> None:
     if request.is_authenticated:
         if is_owner and kwargs:
             if request.user.id == kwargs["id"]:
@@ -86,14 +86,16 @@ def authentication(is_auth: bool, is_owner: bool = False):
     """
 
     def decorator(old_method):
+        handlers = {
+            "User": _check_permissions_for_user,
+            "Advertisement": _check_permissions_for_advertisement,
+        }
+
         @functools.wraps(old_method)
-        def new_method(view_class, **kwargs):
+        def new_method(view_class, *args, **kwargs):
             if any([is_auth, is_owner]):
-                if view_class.model is User:
-                    _check_permissions_for_user(is_auth, is_owner, kwargs)
-                elif view_class.model is Advertisement:
-                    _check_permissions_for_advertisement(is_auth, is_owner, kwargs)
-            response = old_method(view_class, **kwargs)
+                handlers[view_class.model.__tablename__](is_owner, kwargs)
+            response = old_method(view_class, *args, **kwargs)
             return response
 
         return new_method

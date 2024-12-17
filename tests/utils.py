@@ -30,7 +30,6 @@ class AdvertisementFactory(factory.alchemy.SQLAlchemyModelFactory):
 
 
 class TestAPIClient(FlaskClient):
-
     def __init__(self, *args, **kwargs):
         self.bcrypt = AppBcrypt(app=app)
         self._user_data: dict = UserFactory.stub().__dict__
