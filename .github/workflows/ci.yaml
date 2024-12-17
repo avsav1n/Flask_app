@@ -41,6 +41,9 @@ jobs:
       - name: linting
         run: flake8 --max-line-length=100 server/
 
+      - name: apply migrations
+        run: alembic upgrade head
+        
       - name: tests
         run: pytest
         env:
