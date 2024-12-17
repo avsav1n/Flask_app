@@ -19,7 +19,7 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
 
 
 class AdvertisementFactory(factory.alchemy.SQLAlchemyModelFactory):
-    title: str = factory.Faker("sentence")
+    title: str = factory.Faker("sentence", variable_nb_words=False)
     text: str = factory.Faker("paragraph", nb_sentences=10)
     user: User = factory.SubFactory(UserFactory)
 
