@@ -1,0 +1,39 @@
+volumes:
+  socket:
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 5000:5000
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./conf.d/:/etc/nginx/conf.d
+      - socket:/socket
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 5s
+  flask:
+    build: ..
+    container_name: flask
+    env_file:
+      - ./.env
+    volumes:
+      - socket:/app/socket
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+      nginx:
+        condition: service_started
+

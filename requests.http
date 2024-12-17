@@ -1,0 +1,69 @@
+@baseurl = http://localhost:8000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQxLCJleHAiOjE3MzQyOTI3MzR9.TCd-Y8iML3wuEDAfVQDvNygb3t8xQjVVBq1HSNEJRaI
+@token2 = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQyLCJleHAiOjE3MzQyOTgwNDl9.ToZjmiIYXx_WpwFhQ2p-MCwIVSCCgDYzuX8UMbZYjGo
+
+###
+POST {{baseurl}}/login
+Authorization: Basic TESTUSER2 Aq1
+
+###
+GET {{baseurl}}/user
+Content-Type: application/json
+# Authorization: Token {{token2}}
+
+###
+GET {{baseurl}}/user/136
+Content-Type: application/json
+# Authorization: Token {{token}}
+
+###
+POST {{baseurl}}/user
+Content-Type: application/json
+# Authorization: Token {{token}}
+
+{
+    "username": "TESTUSER2",
+    "password": "Aq1"
+}
+
+###
+PATCH {{baseurl}}/user/136
+Content-Type: application/json
+Authorization: Token {{token}}
+
+{
+    "password": "1jklL23"
+}
+
+###
+DELETE {{baseurl}}/user/136
+Content-Type: application/json
+Authorization: Token {{token}}
+
+###
+GET {{baseurl}}/advertisement
+Content-Type: application/json
+
+###
+POST {{baseurl}}/advertisement
+Content-Type: application/json
+Authorization: Token {{token2}}
+
+{
+    "title": "TESTTITLE123",
+    "text": "TEXTXTEXTXTEXTXTEXTXTEXTXTEXTXTEXTXv"
+}
+
+###
+PATCH {{baseurl}}/advertisement/18
+Content-Type: application/json
+Authorization: Token {{token}}
+
+{
+    "text": "asd1"
+}
+
+###
+DELETE  {{baseurl}}/advertisement/20
+Content-Type: application/json
+Authorization: Token {{token2}}
